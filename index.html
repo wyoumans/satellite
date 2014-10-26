@@ -66,26 +66,15 @@
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     // LIGHT
-    var light = new THREE.PointLight(0xffffff);
-    light.position.set(-100, 200, 100);
-    scene.add(light);
+    var pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.set(-100, 200, 100);
+    scene.add(pointLight);
 
-    // SKYBOX/FOG
-    var skyBoxGeometry = new THREE.CubeGeometry(10000, 10000, 10000);
-    var skyBoxMaterial = new THREE.MeshBasicMaterial({
-      color: 0x9999ff,
-      side: THREE.BackSide
-    });
-    var skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
-
-    // scene.add(skyBox);
-    scene.fog = new THREE.FogExp2(0x9999ff, 0.00025);
+    var ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+    scene.add(ambientLight);
 
     var jsonLoader = new THREE.JSONLoader();
     jsonLoader.load("models/satellite.js", addModelToScene);
-
-    var ambientLight = new THREE.AmbientLight(0x111111);
-    scene.add(ambientLight);
   }
 
   function addModelToScene(geometry, materials) {
