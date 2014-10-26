@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Space eXplore</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+  <!-- styles -->
+  <link rel="stylesheet" href="styles/style.css"/>
+
+  <!-- scripts -->
+  <script src="scripts/Three.js"></script>
+  <script src="scripts/Detector.js"></script>
+  <script src="scripts/OrbitControls.js"></script>
+  <script src="scripts/THREEx.FullScreen.js"></script>
+  <script src="scripts/THREEx.WindowResize.js"></script>
+</head>
+<body>
+  <div id="canvas"></div>
+  <script>
+
+  // standard global variables
+  var container, scene, camera, renderer, controls;
+
+  // custom global variables
+  var satellite;
+
+  init();
+  animate();
+
+  // FUNCTIONS
+  function init() {
+    // SCENE
+    scene = new THREE.Scene();
+
+    // CAMERA
+    var SCREEN_WIDTH = window.innerWidth,
+        SCREEN_HEIGHT = window.innerHeight;
+
+    var VIEW_ANGLE = 45,
+        ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT,
+        NEAR = 0.1,
+        FAR = 20000;
+
+    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    scene.add(camera);
+    camera.position.set(0, 150, 400);
+    camera.lookAt(scene.position);
+
+    // RENDERER
+    if (Detector.webgl) {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true
+      });
+    } else {
+      renderer = new THREE.CanvasRenderer();
+    }
+    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    container = document.getElementById('canvas');
+    container.appendChild(renderer.domElement);
+
+    // EVENTS
+    THREEx.WindowResize(renderer, camera);
+
+    // CONTROLS
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    // LIGHT
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(-100, 200, 100);
+    scene.add(light);
+
+    // SKYBOX/FOG
+    var skyBoxGeometry = new THREE.CubeGeometry(10000, 10000, 10000);
+    var skyBoxMaterial = new THREE.MeshBasicMaterial({
+      color: 0x9999ff,
+      side: THREE.BackSide
+    });
+    var skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
+
+    // scene.add(skyBox);
+    scene.fog = new THREE.FogExp2(0x9999ff, 0.00025);
+
+    var jsonLoader = new THREE.JSONLoader();
+    jsonLoader.load("models/satellite.js", addModelToScene);
+
+    var ambientLight = new THREE.AmbientLight(0x111111);
+    scene.add(ambientLight);
+  }
+
+  function addModelToScene(geometry, materials) {
+    var material = new THREE.MeshFaceMaterial(materials);
+    satellite = new THREE.Mesh(geometry, material);
+    satellite.scale.set(10, 10, 10);
+    scene.add(satellite);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    controls.update();
+  }
+  </script>
+
+</body>
+</html>
