@@ -66,8 +66,8 @@
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     // LIGHT
-    var pointLight = new THREE.PointLight(0xffffff);
-    pointLight.position.set(-100, 200, 100);
+    var pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(-500, 300, 100);
     scene.add(pointLight);
 
     var ambientLight = new THREE.AmbientLight(0x404040); // soft white light
@@ -80,7 +80,7 @@
   function addModelToScene(geometry, materials) {
     var material = new THREE.MeshFaceMaterial(materials);
     satellite = new THREE.Mesh(geometry, material);
-    satellite.scale.set(10, 10, 10);
+    // satellite.scale.set(10, 10, 10);
     scene.add(satellite);
   }
 
